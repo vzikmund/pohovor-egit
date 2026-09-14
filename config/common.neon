@@ -1,0 +1,18 @@
+application:
+	mapping: App\Presentation\*\**Presenter
+
+
+latte:
+	strictTypes: true
+	extensions:
+		- App\Presentation\Accessory\LatteExtension
+
+
+session:
+	expiration: 14 days
+
+
+di:
+	export:
+		parameters: false
+		tags: false

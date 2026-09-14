@@ -1,0 +1,5 @@
+# Zkopírujte jako config/local.neon (soubor je v .gitignore).
+database:
+	dsn: 'mysql:host=db;dbname=poukazy;charset=utf8mb4'
+	user: poukazy
+	password: poukazy

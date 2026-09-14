@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS poukazy_test CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+GRANT ALL PRIVILEGES ON poukazy_test.* TO 'poukazy'@'%';
+FLUSH PRIVILEGES;

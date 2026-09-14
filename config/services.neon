@@ -1,0 +1,12 @@
+services:
+	- App\Core\RouterFactory::createRouter
+	- App\Model\SystemClock
+
+
+search:
+	-	in: %appDir%
+		classes:
+			- *Facade
+			- *Repository
+			- *Generator
+			- *Authenticator

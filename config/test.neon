@@ -1,0 +1,5 @@
+# Testovací databáze v Docker prostředí, data se v testech přepisují.
+database:
+	dsn: 'mysql:host=db;dbname=poukazy_test;charset=utf8mb4'
+	user: poukazy
+	password: poukazy

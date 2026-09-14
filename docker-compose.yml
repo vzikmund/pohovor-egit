@@ -1,0 +1,41 @@
+services:
+  app:
+    build: docker/app
+    # Spouští se pod vaším uživatelem, aby vendor/, temp/ a log/ nepatřily rootovi.
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    command: php -S 0.0.0.0:8080 -t www
+    environment:
+      APP_DEBUG: "1"
+      COMPOSER_HOME: /tmp/composer
+      # Více workerů, aby server zvládl souběžné požadavky.
+      PHP_CLI_SERVER_WORKERS: "4"
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: poukazy
+      MYSQL_USER: poukazy
+      MYSQL_PASSWORD: poukazy
+      TZ: Europe/Prague
+    ports:
+      - "33060:3306"
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  db-data:
