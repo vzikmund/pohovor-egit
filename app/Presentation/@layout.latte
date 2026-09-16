@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Poukazy</title>
+	<link rel="stylesheet" href="{$basePath}/css/style.css">
+</head>
+<body>
+	<header class="topbar">
+		<a n:href="Home:default" class="brand">Poukazy</a>
+		<nav n:if="$user->isLoggedIn()">
+			<a n:if="$user->isInRole('admin')" n:href="Voucher:default">Seznam poukazů</a>
+			<span class="who">{$user->getIdentity()->email}</span>
+			<a n:href="Sign:out">Odhlásit se</a>
+		</nav>
+	</header>
+
+	<main>
+		<div n:foreach="$flashes as $flash" n:class="flash, 'flash-' . $flash->type">{$flash->message}</div>
+
+		{include content}
+	</main>
+</body>
+</html>

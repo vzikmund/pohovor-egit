@@ -1,0 +1,8 @@
+{block content}
+<h1>Vítejte</h1>
+
+{if $user->isInRole('admin')}
+	<p>Vydané poukazy najdete v <a n:href="Voucher:default">seznamu poukazů</a>.</p>
+{else}
+	<p>Partnerská sekce zatím neobsahuje žádné stránky.</p>
+{/if}
