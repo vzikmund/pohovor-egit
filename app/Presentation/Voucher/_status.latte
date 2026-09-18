@@ -1,0 +1,9 @@
+{if $voucher->status === \App\Model\Voucher\VoucherStatus::Blocked}
+	<span class="badge badge-blocked">Zablokovaný</span>
+{elseif $voucher->isExpired($now)}
+	<span class="badge badge-expired">Propadlý</span>
+{elseif $voucher->balance === 0}
+	<span class="badge badge-empty">Vyčerpaný</span>
+{else}
+	<span class="badge badge-active">Platný</span>
+{/if}

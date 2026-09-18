@@ -1,0 +1,52 @@
+{block title}Poukaz {$voucher->code}{/block}
+
+{block content}
+<p class="back"><a n:href="default">Zpět na seznam poukazů</a></p>
+
+<section class="ticket">
+	<div class="ticket-main">
+		<span class="ticket-label">Kód poukazu</span>
+		<span class="ticket-code">{$voucher->code}</span>
+		{include '_status.latte', voucher: $voucher, now: $now}
+	</div>
+	<div class="ticket-stub">
+		<span class="ticket-label">Zůstatek</span>
+		<span class="ticket-balance">{$voucher->balance|money}</span>
+		<span class="ticket-of">z {$voucher->initialAmount|money}</span>
+	</div>
+</section>
+
+<dl class="facts">
+	<dt>Platí do</dt>
+	<dd>{$voucher->expiresAt|date:'j. n. Y'} včetně</dd>
+	<dt>Zákazník</dt>
+	<dd>{$voucher->customerEmail ?? '–'}</dd>
+	<dt>Vydán</dt>
+	<dd>{$voucher->createdAt|date:'j. n. Y H:i'}</dd>
+	<dt>Poznámka</dt>
+	<dd>{$voucher->note ?? '–'}</dd>
+</dl>
+
+<h2>Historie uplatnění</h2>
+{if count($redemptions)}
+	<div class="table-wrap">
+		<table class="list">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Partner</th>
+					<th class="num">Částka</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr n:foreach="$redemptions as $redemption">
+					<td>{$redemption->created_at|date:'j. n. Y H:i'}</td>
+					<td>{$redemption->partner?->name ?? 'Administrace'}</td>
+					<td class="num">{$redemption->amount|money}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+{else}
+	<p class="muted">Poukaz zatím nebyl uplatněn.</p>
+{/if}
