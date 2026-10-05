@@ -11,6 +11,7 @@
 		<a n:href="Home:default" class="brand">Poukazy</a>
 		<nav n:if="$user->isLoggedIn()">
 			<a n:if="$user->isInRole('admin')" n:href="Voucher:default">Seznam poukazů</a>
+			<a n:href="CashDesk:default">Pokladna</a>
 			<span class="who">{$user->getIdentity()->email}</span>
 			<a n:href="Sign:out">Odhlásit se</a>
 		</nav>
