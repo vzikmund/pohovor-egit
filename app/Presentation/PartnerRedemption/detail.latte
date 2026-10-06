@@ -1,0 +1,19 @@
+{block title}Uplatnění #{$redemption->id}{/block}
+
+{block content}
+<p class="back"><a n:href="default">Zpět na moje uplatnění</a></p>
+
+<h1>Uplatnění #{$redemption->id}</h1>
+
+<dl class="facts">
+	<dt>Datum</dt>
+	<dd>{$redemption->created_at|date:'j. n. Y H:i'}</dd>
+	<dt>Částka</dt>
+	<dd>{$redemption->amount|money}</dd>
+	<dt>Kód poukazu</dt>
+	<dd class="code">{$voucher->code}</dd>
+	<dt>Zůstatek poukazu</dt>
+	<dd>{$voucher->balance|money}</dd>
+	<dt>Zákazník</dt>
+	<dd>{$voucher->customer_email ?? '–'}</dd>
+</dl>
