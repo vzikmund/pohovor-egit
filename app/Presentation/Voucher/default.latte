@@ -11,7 +11,6 @@
 		<thead>
 			<tr>
 				<th>Kód</th>
-				<th class="num">Hodnota</th>
 				<th class="num">Zůstatek</th>
 				<th>Platí do</th>
 				<th>Stav</th>
@@ -21,7 +20,6 @@
 		<tbody>
 			<tr n:foreach="$vouchers as $voucher">
 				<td><a n:href="detail, $voucher->id" class="code">{$voucher->code}</a></td>
-				<td class="num">{$voucher->initialAmount|money}</td>
 				<td class="num">{$voucher->balance|money}</td>
 				<td>{$voucher->expiresAt|date:'j. n. Y'}</td>
 				<td>{include '_status.latte', voucher: $voucher, now: $now}</td>

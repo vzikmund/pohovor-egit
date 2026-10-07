@@ -12,7 +12,6 @@
 	<div class="ticket-stub">
 		<span class="ticket-label">Zůstatek</span>
 		<span class="ticket-balance">{$voucher->balance|money}</span>
-		<span class="ticket-of">z {$voucher->initialAmount|money}</span>
 	</div>
 </section>
 
@@ -24,8 +23,10 @@
 	<dt>Vydán</dt>
 	<dd>{$voucher->createdAt|date:'j. n. Y H:i'}</dd>
 	<dt>Poznámka</dt>
-	<dd>{$voucher->note ?? '–'}</dd>
+	<dd>{if $voucher->note}{=nl2br($voucher->note)|noescape}{else}–{/if}</dd>
 </dl>
+
+<p><a n:href="edit, $voucher->id" class="button">Upravit</a></p>
 
 <h2>Historie uplatnění</h2>
 {if count($redemptions)}

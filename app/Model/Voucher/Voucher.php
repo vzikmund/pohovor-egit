@@ -15,7 +15,6 @@ final readonly class Voucher
 	public function __construct(
 		public int $id,
 		public string $code,
-		public int $initialAmount,
 		public int $balance,
 		public \DateTimeImmutable $expiresAt,
 		public VoucherStatus $status,
@@ -31,7 +30,6 @@ final readonly class Voucher
 		return new self(
 			id: $row->id,
 			code: $row->code,
-			initialAmount: $row->initial_amount,
 			balance: $row->balance,
 			expiresAt: \DateTimeImmutable::createFromInterface($row->expires_at),
 			status: VoucherStatus::from($row->status),

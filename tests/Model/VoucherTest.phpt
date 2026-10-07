@@ -18,7 +18,6 @@ function createVoucher(
 	return new Voucher(
 		id: 1,
 		code: 'HK-TEST-2345',
-		initialAmount: 50_000,
 		balance: $balance,
 		expiresAt: new DateTimeImmutable($expiresAt),
 		status: $status,
