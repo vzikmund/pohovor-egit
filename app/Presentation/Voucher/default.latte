@@ -15,6 +15,7 @@
 				<th class="num">Zůstatek</th>
 				<th>Platí do</th>
 				<th>Stav</th>
+				<th>Partner</th>
 				<th>Zákazník</th>
 			</tr>
 		</thead>
@@ -25,6 +26,7 @@
 				<td class="num">{$voucher->balance|money}</td>
 				<td>{$voucher->expiresAt|date:'j. n. Y'}</td>
 				<td>{include '_status.latte', voucher: $voucher, now: $now}</td>
+				<td>{$voucher->partnerName ?? 'Administrace'}</td>
 				<td>{$voucher->customerEmail ?? '–'}</td>
 			</tr>
 		</tbody>

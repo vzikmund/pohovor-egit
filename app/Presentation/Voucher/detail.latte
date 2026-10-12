@@ -19,6 +19,8 @@
 <dl class="facts">
 	<dt>Platí do</dt>
 	<dd>{$voucher->expiresAt|date:'j. n. Y'} včetně</dd>
+	<dt>Partner</dt>
+	<dd>{$voucher->partnerName ?? 'Administrace'}</dd>
 	<dt>Zákazník</dt>
 	<dd>{$voucher->customerEmail ?? '–'}</dd>
 	<dt>Vydán</dt>
