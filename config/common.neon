@@ -1,3 +1,10 @@
+parameters:
+	voucher:
+		apiValidity: '1 year'
+		minAmount: 10000   # 100 Kč
+		maxAmount: 1000000 # 10 000 Kč
+
+
 application:
 	mapping: App\Presentation\*\**Presenter
 
