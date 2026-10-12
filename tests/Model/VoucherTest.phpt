@@ -24,18 +24,21 @@ function createVoucher(
 		status: $status,
 		customerEmail: null,
 		note: null,
+		partnerId: null,
+		partnerName: null,
+		transactionId: null,
 		createdAt: new DateTimeImmutable('2026-01-05 10:00'),
 	);
 }
 
 
-test('poukaz po datu platnosti je propadlý', function () {
+test('poukaz po datu platnosti je prpadlý', function () {
 	$voucher = createVoucher('2026-03-31');
 	Assert::true($voucher->isExpired(new DateTimeImmutable('2026-04-15 10:00')));
 });
 
 
-test('poukaz před datem platnosti není propadlý', function () {
+test('poukaz před datem platnosti není prpadlý', function () {
 	$voucher = createVoucher('2026-03-31');
 	Assert::false($voucher->isExpired(new DateTimeImmutable('2026-02-10 10:00')));
 });
