@@ -6,6 +6,8 @@ namespace App\Presentation\Api;
 
 use App\Model\Partner\Partner;
 use App\Model\Partner\PartnerRepository;
+use App\Model\Voucher\VoucherFacade;
+use App\Model\Voucher\VoucherValidationException;
 use Nette;
 use Nette\Http\IResponse;
 use Nette\Utils\Json;
@@ -23,6 +25,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 
 	public function __construct(
 		private readonly PartnerRepository $partnerRepository,
+		private readonly VoucherFacade $voucherFacade,
 	) {
 	}
 
@@ -34,21 +37,58 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 
 
 	/**
-	 * POST /api/v1/vouchers — vydání poukazu
-	 * Jen Bearer auth, ať jde ověřit requirePartner.
+	 * POST /api/v1/vouchers — vydání poukazu partnerem.
 	 */
 	public function actionCreateVoucher(): void
 	{
+		if (!$this->getHttpRequest()->isMethod('POST')) {
+			$this->sendError(IResponse::S405_MethodNotAllowed, 'method_not_allowed', 'Povolená je jen metoda POST.');
+		}
+
 		$this->requirePartner();
+		$body = $this->getJsonBody();
+
+		$amount = $body['amount'] ?? null;
+		if (!is_int($amount) && !(is_string($amount) && ctype_digit($amount))) {
+			$this->sendError(IResponse::S400_BadRequest, 'invalid_amount', 'Pole amount musí být celé číslo (haléře).');
+		}
+		$amount = (int) $amount;
+
+		$transactionId = $body['transactionId'] ?? null;
+		if ($transactionId !== null && !is_string($transactionId)) {
+			$this->sendError(IResponse::S400_BadRequest, 'invalid_transaction_id', 'Pole transactionId musí být řetězec.');
+		}
+		$transactionId = is_string($transactionId) ? $transactionId : '';
+
+		$customerEmail = $body['customerEmail'] ?? null;
+		if ($customerEmail !== null && !is_string($customerEmail)) {
+			$this->sendError(IResponse::S400_BadRequest, 'invalid_email', 'Pole customerEmail musí být řetězec.');
+		}
+		$customerEmail = is_string($customerEmail) && $customerEmail !== '' ? $customerEmail : null;
+
+		try {
+			$voucher = $this->voucherFacade->issueForPartner(
+				partnerId: $this->partner->id,
+				transactionId: $transactionId,
+				amount: $amount,
+				customerEmail: $customerEmail,
+			);
+		} catch (VoucherValidationException $e) {
+			$this->sendError(IResponse::S400_BadRequest, $e->error, $e->getMessage());
+		}
+
+		$this->getHttpResponse()->setCode(IResponse::S201_Created);
 		$this->sendJson([
-			'partnerId' => $this->partner->id,
-			'partnerName' => $this->partner->name,
+			'id' => $voucher->id,
+			'code' => $voucher->code,
+			'amount' => $voucher->initialAmount,
+			'expiresAt' => $voucher->expiresAt->format('Y-m-d'),
 		]);
 	}
 
 
 	/**
-	 * Ověří Authorization: Bearer token a nstaví partenera.
+	 * Ověří Authorization: Bearer <API klíč> a nastaví $this->partner.
 	 */
 	protected function requirePartner(): void
 	{
