@@ -12,7 +12,7 @@ docker compose exec app php bin/migrate.php
 docker compose exec app php bin/migrate.php --test
 ```
 
-Aplikace běží na http://localhost:8080. Kontejner `app` běží pod UID 1000; pokud máte jiné, spusťte `UID=$(id -u) GID=$(id -g) docker compose up -d`.
+Aplikace běží na http://localhost:8081 (jiný port nastavíte přes `APP_PORT=9000 docker compose up -d`). Kontejner `app` běží pod UID 1000; pokud máte jiné, spusťte `UID=$(id -u) GID=$(id -g) docker compose up -d`.
 
 | Uživatel | Heslo | Role |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ Aplikace běží na http://localhost:8080. Kontejner `app` běží pod UID 1000;
 API klíče partnerů: Trafika Alfa `alfa-test-key-123`, Pokladní síť Beta `beta-test-key-456`. Databáze ukládá jejich SHA-256 hash.
 
 ```bash
-curl http://localhost:8080/api/v1/ping
+curl http://localhost:8081/api/v1/ping
 ```
 
 ## Užitečné příkazy
