@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Api;
 
+use App\Model\Partner\Partner;
+use App\Model\Partner\PartnerRepository;
 use Nette;
 use Nette\Http\IResponse;
 use Nette\Utils\Json;
 use Nette\Utils\JsonException;
+use Nette\Utils\Strings;
 
 
 /**
@@ -15,9 +18,60 @@ use Nette\Utils\JsonException;
  */
 class ApiPresenter extends Nette\Application\UI\Presenter
 {
+	protected ?Partner $partner = null;
+
+
+	public function __construct(
+		private readonly PartnerRepository $partnerRepository,
+	) {
+	}
+
+
 	public function actionPing(): void
 	{
 		$this->sendJson(['status' => 'ok']);
+	}
+
+
+	/**
+	 * POST /api/v1/vouchers — vydání poukazu
+	 * Jen Bearer auth, ať jde ověřit requirePartner.
+	 */
+	public function actionCreateVoucher(): void
+	{
+		$this->requirePartner();
+		$this->sendJson([
+			'partnerId' => $this->partner->id,
+			'partnerName' => $this->partner->name,
+		]);
+	}
+
+
+	/**
+	 * Ověří Authorization: Bearer token a nstaví partenera.
+	 */
+	protected function requirePartner(): void
+	{
+		$header = $this->getHttpRequest()->getHeader('Authorization');
+		if ($header === null || $header === '') {
+			$this->sendError(IResponse::S401_Unauthorized, 'missing_token', 'Chybí Authorization Bearer token.');
+		}
+
+		if (!Strings::startsWith($header, 'Bearer ')) {
+			$this->sendError(IResponse::S401_Unauthorized, 'invalid_token', 'Authorization musí být ve tvaru Bearer <klíč>.');
+		}
+
+		$apiKey = trim(substr($header, strlen('Bearer ')));
+		if ($apiKey === '') {
+			$this->sendError(IResponse::S401_Unauthorized, 'invalid_token', 'Bearer token je prázdný.');
+		}
+
+		$partner = $this->partnerRepository->findByApiKey($apiKey);
+		if (!$partner) {
+			$this->sendError(IResponse::S401_Unauthorized, 'invalid_token', 'Neplatný API klíč.');
+		}
+
+		$this->partner = $partner;
 	}
 
 
