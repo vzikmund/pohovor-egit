@@ -44,7 +44,7 @@ final readonly class Voucher
 
 	public function isExpired(\DateTimeImmutable $now): bool
 	{
-		return $this->expiresAt < $now;
+		return $this->expiresAt->setTime(0, 0) < $now->setTime(0, 0);
 	}
 
 
