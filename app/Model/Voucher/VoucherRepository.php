@@ -48,12 +48,24 @@ final class VoucherRepository
 	}
 
 
+	public function findByPartnerTransaction(int $partnerId, string $transactionId): ?Voucher
+	{
+		$row = $this->database->table('voucher')
+			->where('partner_id', $partnerId)
+			->where('transaction_id', $transactionId)
+			->fetch();
+		return $row ? Voucher::fromRow($row) : null;
+	}
+
+
 	public function insert(
 		string $code,
 		int $amount,
 		\DateTimeImmutable $expiresAt,
 		?string $customerEmail,
 		?string $note,
+		?int $partnerId = null,
+		?string $transactionId = null,
 	): Voucher
 	{
 		$row = $this->database->table('voucher')->insert([
@@ -64,6 +76,8 @@ final class VoucherRepository
 			'status' => VoucherStatus::Active->value,
 			'customer_email' => $customerEmail,
 			'note' => $note,
+			'partner_id' => $partnerId,
+			'transaction_id' => $transactionId,
 		]);
 
 		return $this->getById($row->id);
