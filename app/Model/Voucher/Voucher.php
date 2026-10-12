@@ -21,6 +21,9 @@ final readonly class Voucher
 		public VoucherStatus $status,
 		public ?string $customerEmail,
 		public ?string $note,
+		public ?int $partnerId,
+		public ?string $partnerName,
+		public ?string $transactionId,
 		public \DateTimeImmutable $createdAt,
 	) {
 	}
@@ -37,6 +40,9 @@ final readonly class Voucher
 			status: VoucherStatus::from($row->status),
 			customerEmail: $row->customer_email,
 			note: $row->note,
+			partnerId: $row->partner_id,
+			partnerName: $row->partner?->name,
+			transactionId: $row->transaction_id,
 			createdAt: \DateTimeImmutable::createFromInterface($row->created_at),
 		);
 	}
