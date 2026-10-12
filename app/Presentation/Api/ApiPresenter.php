@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Api;
 
+use App\Model\Clock;
 use App\Model\Partner\Partner;
 use App\Model\Partner\PartnerRepository;
 use App\Model\Voucher\VoucherFacade;
@@ -26,6 +27,7 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	public function __construct(
 		private readonly PartnerRepository $partnerRepository,
 		private readonly VoucherFacade $voucherFacade,
+		private readonly Clock $clock,
 	) {
 	}
 
@@ -33,6 +35,32 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	public function actionPing(): void
 	{
 		$this->sendJson(['status' => 'ok']);
+	}
+
+
+	/**
+	 * GET /api/v1/vouchers/<code> — info o poukazu partner
+	 */
+	public function actionGetVoucher(string $code): void
+	{
+		if (!$this->getHttpRequest()->isMethod('GET')) {
+			$this->sendError(IResponse::S405_MethodNotAllowed, 'method_not_allowed', 'Povolená je jen metoda GET.');
+		}
+
+		$this->requirePartner();
+
+		try {
+			$voucher = $this->voucherFacade->getForPartner($this->partner->id, $code);
+		} catch (VoucherValidationException $e) {
+			$this->sendError($this->httpCodeForValidation($e->error), $e->error, $e->getMessage());
+		}
+
+		$this->sendJson([
+			'code' => $voucher->code,
+			'balance' => $voucher->balance,
+			'expiresAt' => $voucher->expiresAt->format('Y-m-d'),
+			'redeemable' => $voucher->isRedeemable($this->clock->now()),
+		]);
 	}
 
 
@@ -142,5 +170,15 @@ class ApiPresenter extends Nette\Application\UI\Presenter
 	{
 		$this->getHttpResponse()->setCode($httpCode);
 		$this->sendJson(['error' => $error, 'message' => $message]);
+	}
+
+
+	private function httpCodeForValidation(string $error): int
+	{
+		return match ($error) {
+			'voucher_not_found' => IResponse::S404_NotFound,
+			'voucher_forbidden' => IResponse::S403_Forbidden,
+			default => IResponse::S400_BadRequest,
+		};
 	}
 }

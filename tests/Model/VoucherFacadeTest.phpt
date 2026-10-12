@@ -92,3 +92,34 @@ test('neplatný e-mail vyhodí exception', function () use ($facade) {
 		VoucherValidationException::class,
 	);
 });
+
+
+test('getForPartner vrátí poukaz partnera', function () use ($facade) {
+	$tx = 'TEST-GET-' . bin2hex(random_bytes(4));
+	$issued = $facade->issueForPartner(1, $tx, 100_000, null);
+
+	$found = $facade->getForPartner(1, $issued->code);
+	Assert::same($issued->id, $found->id);
+	Assert::same(100_000, $found->balance);
+});
+
+
+test('getForPartner cizí poukaz je not found', function () use ($facade) {
+	$tx = 'TEST-GET-A-' . bin2hex(random_bytes(4));
+	$issued = $facade->issueForPartner(1, $tx, 100_000, null);
+
+	$e = Assert::exception(
+		fn () => $facade->getForPartner(2, $issued->code),
+		VoucherValidationException::class,
+	);
+	Assert::same('voucher_not_found', $e->error);
+});
+
+
+test('getForPartner neexistující kód je not_found', function () use ($facade) {
+	$e = Assert::exception(
+		fn () => $facade->getForPartner(1, 'HK-XXXX-YYYY'),
+		VoucherValidationException::class,
+	);
+	Assert::same('voucher_not_found', $e->error);
+});

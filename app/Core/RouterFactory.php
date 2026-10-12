@@ -13,6 +13,7 @@ final class RouterFactory
 	{
 		$router = new RouteList;
 		$router->addRoute('api/v1/ping', 'Api:ping');
+		$router->addRoute('api/v1/vouchers/<code>', 'Api:getVoucher');
 		$router->addRoute('api/v1/vouchers', 'Api:createVoucher');
 		$router->addRoute('<presenter>/<action>[/<id>]', 'Home:default');
 		return $router;

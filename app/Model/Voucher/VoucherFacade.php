@@ -41,6 +41,31 @@ final class VoucherFacade
 
 
 	/**
+	 * info o pokazu partnera, jen pro poukazy daného partnera
+	 */
+	public function getForPartner(int $partnerId, string $code): Voucher
+	{
+		$voucher = $this->voucherRepository->getByCode($code);
+		if (!$voucher) {
+			throw new VoucherValidationException(
+				'voucher_not_found',
+				'Poukaz s tímto kódem neexistuje.',
+			);
+		}
+
+		// Neleakovat, že poukaz existuje, ale není toho partnera
+		if ($voucher->partnerId !== $partnerId) {
+			throw new VoucherValidationException(
+				'voucher_not_found',
+				'Poukaz s tímto kódem neexistuje.',
+			);
+		}
+
+		return $voucher;
+	}
+
+
+	/**
 	 * Vydá poukaz přes API partnera, stejné transactionId u partnera vrátí existující voucher
 	 * @param int $amount hodnota v haléřích
 	 */
