@@ -41,6 +41,43 @@ final class VoucherPresenter extends SecuredPresenter
 	}
 
 
+	public function actionEdit(int $id): void
+	{
+		$voucher = $this->voucherRepository->getById($id);
+		if (!$voucher) {
+			$this->error('Poukaz neexistuje.');
+		}
+
+		$this['editForm']->setDefaults([
+			'customer_email' => $voucher->customerEmail,
+			'note' => $voucher->note,
+		]);
+		$this->template->voucher = $voucher;
+	}
+
+
+	protected function createComponentEditForm(): Form
+	{
+		$form = new Form;
+		$form->addEmail('customer_email', 'E-mail zákazníka');
+		$form->addTextArea('note', 'Poznámka');
+		$form->addSubmit('save', 'Uložit');
+		$form->onSuccess[] = function (Form $form) {
+			$data = $form->getHttpData();
+			unset($data['save'], $data['_do']);
+
+			try {
+				$this->voucherRepository->update((int) $this->getParameter('id'), $data);
+				$this->flashMessage('Poukaz byl uložen.');
+				$this->redirect('detail', $this->getParameter('id'));
+			} catch (\Exception $e) {
+				$this->flashMessage('Uložení se nepovedlo.', 'error');
+			}
+		};
+		return $form;
+	}
+
+
 	protected function createComponentCreateForm(): Form
 	{
 		$form = new Form;

@@ -1,0 +1,37 @@
+{block title}Pokladna{/block}
+
+{block content}
+<div class="narrow">
+	<h1>Pokladna</h1>
+	<p>Zadejte kód poukazu a částku v Kč.</p>
+
+	<form id="cashdesk">
+		<table>
+			<tr><th><label for="code">Kód poukazu</label></th></tr>
+			<tr><td><input id="code" placeholder="HK-XXXX-XXXX" autocomplete="off"></td></tr>
+			<tr><th><label for="amount">Částka v Kč</label></th></tr>
+			<tr><td><input id="amount" inputmode="decimal"></td></tr>
+		</table>
+		<input type="submit" value="Uplatnit">
+	</form>
+
+	<p id="result"></p>
+</div>
+
+<script>
+document.getElementById('cashdesk').addEventListener('submit', function (e) {
+	e.preventDefault();
+	var code = document.getElementById('code').value;
+	var amount = parseFloat(document.getElementById('amount').value.replace(',', '.')) * 100;
+
+	fetch({link redeem} + '?code=' + code + '&amount=' + amount)
+		.then(function (response) { return response.json(); })
+		.then(function (data) {
+			if (data.ok) {
+				document.getElementById('result').innerHTML = 'Uplatněno, zbývá ' + (data.balance / 100) + ' Kč';
+			} else {
+				document.getElementById('result').innerHTML = 'Poukaz nelze uplatnit';
+			}
+		});
+});
+</script>

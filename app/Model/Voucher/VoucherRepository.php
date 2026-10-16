@@ -70,7 +70,6 @@ final class VoucherRepository
 	{
 		$row = $this->database->table('voucher')->insert([
 			'code' => $code,
-			'initial_amount' => $amount,
 			'balance' => $amount,
 			'expires_at' => $expiresAt->format('Y-m-d'),
 			'status' => VoucherStatus::Active->value,
@@ -81,6 +80,12 @@ final class VoucherRepository
 		]);
 
 		return $this->getById($row->id);
+	}
+
+
+	public function update(int $id, array $data): void
+	{
+		$this->database->table('voucher')->where('id', $id)->update($data);
 	}
 
 

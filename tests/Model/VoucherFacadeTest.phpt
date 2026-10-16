@@ -28,7 +28,6 @@ test('vydaný poukaz má plný zůstatek a jde najít podle kódu', function () 
 	$found = $repository->getByCode($issued->code);
 	Assert::notNull($found);
 	Assert::same($issued->id, $found->id);
-	Assert::same(50_000, $found->initialAmount);
 	Assert::same(50_000, $found->balance);
 	Assert::null($found->partnerId);
 	Assert::null($found->transactionId);

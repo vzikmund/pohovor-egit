@@ -1,0 +1,27 @@
+{block title}Moje uplatnění{/block}
+
+{block content}
+<h1>Moje uplatnění</h1>
+
+{if $items}
+	<div class="table-wrap">
+		<table class="list">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Kód poukazu</th>
+					<th class="num">Částka</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr n:foreach="$items as $item">
+					<td><a n:href="detail, $item['id']">{$item['created_at']|date:'j. n. Y H:i'}</a></td>
+					<td class="code">{$item['code']}</td>
+					<td class="num">{$item['amount']|money}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+{else}
+	<p class="muted">Zatím jste neuplatnili žádný poukaz.</p>
+{/if}

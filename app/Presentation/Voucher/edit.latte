@@ -1,0 +1,9 @@
+{block title}Upravit poukaz {$voucher->code}{/block}
+
+{block content}
+<p class="back"><a n:href="detail, $voucher->id">Zpět na detail</a></p>
+
+<div class="narrow">
+	<h1>Upravit poukaz {$voucher->code}</h1>
+	{control editForm}
+</div>

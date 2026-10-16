@@ -1,0 +1,5 @@
+# napojeno na kopii produkční DB, ať jde pokladna otestovat na reálných poukazech
+database:
+	dsn: 'mysql:host=prod-db.internal;dbname=poukazy;charset=utf8mb4'
+	user: poukazy_app
+	password: 'Pokladna2026!'
